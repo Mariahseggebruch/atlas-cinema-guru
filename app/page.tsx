@@ -30,6 +30,8 @@ const Page: React.FC = () => {
         setTitles(data);
       } catch (err: any) {
         setError(err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
