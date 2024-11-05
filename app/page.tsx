@@ -43,8 +43,8 @@ const Page: React.FC = () => {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen">
-      <HomePage titles={titles} />
+    <div className="flex flex-col h-screen w-full">
+      <HomePage />
     </div>
   );
 };

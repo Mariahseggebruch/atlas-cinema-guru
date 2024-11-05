@@ -22,9 +22,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <header className="header">
               <Header />
             </header>
-            <div className="flex">
+            <div className="content-wrapper" style={{ display: "flex", flexDirection: "row" }}>
             <NavBar />
-            <main className="main-content w-full">
+            <main className="main-content">
                 {children}
               </main>
             </div>
