@@ -18,8 +18,21 @@ const HomePage: React.FC = () => {
   const allGenres = ['Action', 'Comedy', 'Drama', 'Horror'];
 
   useEffect(() => {
-    // Fetch paginated data here
-  }, [currentPage]);
+    const fetchMovies = async () => {
+      try {
+        const response = await fetch(`/api/titles?page=${currentPage}&limit=${moviesPerPage}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setPaginatedMovies(data); // Set the fetched data
+      } catch (error) {
+        console.error('Failed to fetch movies:', error);
+      }
+    };
+
+    fetchMovies();
+  }, [currentPage, moviesPerPage]); // Depend on currentPage and moviesPerPage
 
   const toggleFavorite = (id: string) => {
     setFavorites((prev) =>
@@ -60,7 +73,7 @@ const HomePage: React.FC = () => {
         />
         <Pagination
           currentPage={currentPage}
-          totalMovies={100} // replace with the actual total count
+          totalMovies={100}
           onPageChange={handlePageChange}
         />
       </div>
