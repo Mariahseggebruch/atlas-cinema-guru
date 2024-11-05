@@ -80,7 +80,7 @@ const Filters: React.FC<FiltersProps> = ({
                   : [...genres, genre];
                 setGenres(newGenres);
               }}
-              className={`p-2 border border-[#54F4D0] ${genres.includes(genre) ? 'bg-[#54F4D0] text-[#00003C]' : 'bg-[#00003C] text-white'} rounded-full w-full focus:outline-none focus:ring-0 w-fit`}
+              className={`p-2 border border-[#54F4D0] ${genres.includes(genre) ? 'bg-[#54F4D0] text-[#00003C]' : 'bg-[#00003C] text-white'} rounded-full focus:outline-none focus:ring-0 w-fit`}
             >
               {genre}
             </button>
