@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Filters from './Filters';
+import MoviesList from './MoviesList';
+import { Title } from '@/lib/definitions';
 
 const HomePage = () => {
   // Example data and state for demonstration purposes
@@ -22,6 +24,13 @@ const HomePage = () => {
         setGenres={setGenres}
         allGenres={allGenres} 
       />
+      <MoviesList
+          paginatedMovies={paginatedMovies}
+          favorites={favorites}
+          watchLater={watchLater}
+          onFavoriteToggle={toggleFavorite}
+          onWatchLaterToggle={toggleWatchLater}
+        />
     </div>
     </main>
   );
