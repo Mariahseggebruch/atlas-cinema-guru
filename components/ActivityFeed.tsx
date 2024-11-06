@@ -20,7 +20,13 @@ const ActivityFeed: React.FC = () => {
         });
 
         const data = await response.json();
-        setActivities(data.activities); // Assuming the response returns an 'activities' array
+        
+        // Check if the data is in the expected format
+        if (data && data.activities) {
+          setActivities(data.activities); // Assuming the response returns an 'activities' array
+        } else {
+          setError("No activities found.");
+        }
       } catch (err) {
         console.error("Failed to load activities:", err);
         setError("Failed to load activities. Please try again later.");
@@ -41,7 +47,7 @@ const ActivityFeed: React.FC = () => {
               <p className="text-xs text-blue-900">
                 {new Date(activity.timestamp).toLocaleString()}
               </p>
-              <p className="text-sm #00003c font-semibold">
+              <p className="text-sm text-blue-900 font-semibold">
                 {activity.description}
               </p>
             </li>
@@ -55,4 +61,3 @@ const ActivityFeed: React.FC = () => {
 };
 
 export default ActivityFeed;
-

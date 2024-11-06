@@ -20,19 +20,29 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await fetch(`/api/titles?page=${currentPage}&limit=${moviesPerPage}`);
+        // Build the query string with the filters
+        const queryParams = new URLSearchParams();
+        queryParams.append('page', currentPage.toString());
+        queryParams.append('limit', moviesPerPage.toString());
+
+        // Add the filters if they are set
+        if (minYear) queryParams.append('minYear', minYear.toString());
+        if (maxYear) queryParams.append('maxYear', maxYear.toString());
+        if (genres.length > 0) queryParams.append('genres', genres.join(','));
+
+        const response = await fetch(`/api/titles?${queryParams.toString()}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        setPaginatedMovies(data.title);
+        setPaginatedMovies(data.title); // Assuming 'data.title' is the correct path
       } catch (error) {
         console.error('Failed to fetch movies:', error);
       }
     };
 
     fetchMovies();
-  }, [currentPage, moviesPerPage]); // Depend on currentPage and moviesPerPage
+  }, [currentPage, moviesPerPage, minYear, maxYear, genres]); // Depend on the filter parameters
 
   const toggleFavorite = (id: string) => {
     setFavorites((prev) =>
@@ -73,7 +83,7 @@ const HomePage: React.FC = () => {
         />
         <Pagination
           currentPage={currentPage}
-          totalMovies={100}
+          totalMovies={100} // Adjust this if your API provides the total count
           onPageChange={handlePageChange}
         />
       </div>
