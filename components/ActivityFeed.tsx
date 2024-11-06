@@ -1,63 +1,72 @@
-// components/ActivityFeed.tsx
+"use client";
+
 import React, { useEffect, useState } from "react";
 
 interface Activity {
-  id: string;
-  description: string;
-  timestamp: string;
+    type: string;
+    title: string;
+    timestamp: number;
 }
 
-const ActivityFeed: React.FC = () => {
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [error, setError] = useState<string | null>(null);
+export default function ActivityFeed() {
+    const [activities, setActivities] = useState<Activity[]>([]);
 
-  useEffect(() => {
-    const loadActivities = async () => {
-      try {
-        const response = await fetch("/api/activities?page=1", {
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        });
+    useEffect(() => {
+        const fetchActivities = async () => {
+            try {
+                const response = await fetch('/api/activities');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch activities');
+                }
+                const data = await response.json();
+                setActivities(data.activities);
+            } catch (error) {
+                console.error("Error fetching activities:", error);
+            }
+        };
 
-        const data = await response.json();
-        
-        // Check if the data is in the expected format
-        if (data && data.activities) {
-          setActivities(data.activities); // Assuming the response returns an 'activities' array
-        } else {
-          setError("No activities found.");
-        }
-      } catch (err) {
-        console.error("Failed to load activities:", err);
-        setError("Failed to load activities. Please try again later.");
-      }
-    };
+        fetchActivities();
+    }, []);
 
-    loadActivities();
-  }, []);
+    return (
+      <div className="p-4 flex justify-center items-center font-inter">
+          <div className="bg-[#54f4d0] p-4 rounded-md w-full max-w-md">
+              <h3 className="font-bold mb-2 text-center text-[#00003c]">Latest Activities</h3>
+              <ul className="space-y-1 text-sm text-center">
+                  {activities.length > 0 ? (
+                      activities.map((activity, index) => {
+                          const date = new Date(activity.timestamp);
+                          const formattedDate = date.toLocaleString('en-US', {
+                              month: 'numeric',
+                              day: 'numeric',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit',
+                              hour12: true,
+                          });
 
-  return (
-    <div className="activity-feed bg-teal-100 p-4 rounded-lg shadow-md">
-      <h3 className="text-lg font-semibold text-blue-900 mb-4">Latest Activities</h3>
-      {error && <p className="text-red-500">{error}</p>}
-      {activities.length > 0 ? (
-        <ul className="space-y-3">
-          {activities.map((activity) => (
-            <li key={activity.id} className="activity-item">
-              <p className="text-xs text-blue-900">
-                {new Date(activity.timestamp).toLocaleString()}
-              </p>
-              <p className="text-sm text-blue-900 font-semibold">
-                {activity.description}
-              </p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-center text-gray-600">No recent activities found.</p>
-      )}
-    </div>
+                          if (activity.type === 'removed') {
+                              return null;
+                          }
+
+                          // Determine the message
+                          const message =
+                              activity.type === 'favorite'
+                                  ? `Favorited`
+                                  : `Added`;
+
+                          return (
+                              <li key={index} className="text-[#00003c]">
+                                  <span>{formattedDate}</span> - {message} <strong>{activity.title}</strong> to {activity.type === 'favorite' ? 'Favorites' : 'Watch Later'}
+                              </li>
+                          );
+                      })
+                  ) : (
+                      <li className="text-gray-500">No recent activities</li>
+                  )}
+              </ul>
+          </div>
+      </div>
   );
-};
-
-export default ActivityFeed;
+}
