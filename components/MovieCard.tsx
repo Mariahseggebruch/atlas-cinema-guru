@@ -11,12 +11,30 @@ interface MovieCardProps {
     watchLater: boolean;
     image: string;
   };
-  onFavoriteToggle: (id: string) => void;
   onWatchLaterToggle: (id: string) => void;
 }
 
-const MovieCard = ({ movie, onFavoriteToggle, onWatchLaterToggle }: MovieCardProps) => {
+const MovieCard = ({ movie, onWatchLaterToggle }: MovieCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(movie.favorited);
+
+  const handleFavoriteToggle = async () => {
+    try {
+      if (isFavorited) {
+        // Remove from favorites
+        await fetch(`/api/favorites/${movie.id}`, { method: "DELETE" });
+      } else {
+        // Add to favorites
+        await fetch(`/api/favorites/${movie.id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      setIsFavorited(!isFavorited);
+    } catch (error) {
+      console.error("Failed to toggle favorite:", error);
+    }
+  };
 
   return (
     <div
@@ -37,10 +55,10 @@ const MovieCard = ({ movie, onFavoriteToggle, onWatchLaterToggle }: MovieCardPro
           <p className="text-xs">Genre: {movie.genre}</p>
           <div className="flex gap-2 mt-2">
             <button
-              onClick={() => onFavoriteToggle(movie.id)}
+              onClick={handleFavoriteToggle}
               className="text-yellow-400"
             >
-              {movie.favorited ? '★' : '☆'}
+              {isFavorited ? '★' : '☆'}
             </button>
             <button
               onClick={() => onWatchLaterToggle(movie.id)}
