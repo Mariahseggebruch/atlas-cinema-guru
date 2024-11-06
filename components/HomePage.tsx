@@ -25,7 +25,7 @@ const HomePage: React.FC = () => {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        setPaginatedMovies(data); // Set the fetched data
+        setPaginatedMovies(data.title);
       } catch (error) {
         console.error('Failed to fetch movies:', error);
       }
