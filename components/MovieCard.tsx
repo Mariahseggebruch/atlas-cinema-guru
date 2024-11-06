@@ -17,6 +17,7 @@ interface MovieCardProps {
 const MovieCard = ({ movie, onWatchLaterToggle }: MovieCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isFavorited, setIsFavorited] = useState(movie.favorited);
+  const [isWatchLater, setIsWatchLater] = useState(movie.watchLater);
 
   const handleFavoriteToggle = async () => {
     try {
@@ -33,6 +34,26 @@ const MovieCard = ({ movie, onWatchLaterToggle }: MovieCardProps) => {
       setIsFavorited(!isFavorited);
     } catch (error) {
       console.error("Failed to toggle favorite:", error);
+    }
+  };
+
+  const handleWatchLaterToggle = async () => {
+    try {
+      if (isWatchLater) {
+        // Remove from watch later
+        await fetch(`/api/watch-later/${movie.id}`, { method: "DELETE" });
+      } else {
+        // Add to watch later
+        await fetch(`/api/watch-later/${movie.id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: movie.id }),
+        });
+      }
+      setIsWatchLater(!isWatchLater);
+      onWatchLaterToggle(movie.id); // Notify parent component of the change
+    } catch (error) {
+      console.error("Failed to toggle watch later:", error);
     }
   };
 
@@ -54,17 +75,11 @@ const MovieCard = ({ movie, onWatchLaterToggle }: MovieCardProps) => {
           <p className="text-xs">Released: {movie.released}</p>
           <p className="text-xs">Genre: {movie.genre}</p>
           <div className="flex gap-2 mt-2">
-            <button
-              onClick={handleFavoriteToggle}
-              className="text-yellow-400"
-            >
+            <button onClick={handleFavoriteToggle} className="text-yellow-400">
               {isFavorited ? '★' : '☆'}
             </button>
-            <button
-              onClick={() => onWatchLaterToggle(movie.id)}
-              className="text-blue-400"
-            >
-              {movie.watchLater ? '🕒' : '⏳'}
+            <button onClick={handleWatchLaterToggle} className="text-blue-400">
+              {isWatchLater ? '🕒' : '⏳'}
             </button>
           </div>
         </div>

@@ -2,7 +2,7 @@ import React from 'react';
 import MovieCard from './MovieCard';
 
 interface MoviesListProps {
-  paginatedMovies: any[]; 
+  paginatedMovies: any[]; // Ensure this matches the type of your movie objects
   favorites: string[];
   watchLater: string[];
   onFavoriteToggle: (id: string) => void;
